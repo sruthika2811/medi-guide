@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ labels.title }}</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --primary-gradient: linear-gradient(135deg, #0d6efd 0%, #00d2ff 100%);
+            --success-gradient: linear-gradient(135deg, #198754 0%, #20c997 100%);
+            --danger-gradient: linear-gradient(135deg, #dc3545 0%, #ff4b5c 100%);
+            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+            --reminder-gradient: linear-gradient(135deg, #8b5cf6 0%, #c084fc 100%);
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f8fafc;
+            color: var(--text-dark);
+            background-image: radial-gradient(at 0% 0%, rgba(13, 110, 253, 0.05) 0, transparent 50%),
+                radial-gradient(at 50% 0%, rgba(0, 210, 255, 0.05) 0, transparent 50%);
+            min-height: 100vh;
+        }
+
+        .premium-nav {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 1.25rem 0;
+        }
+
+        .dashboard-wrapper {
+            max-width: 1100px;
+            margin: 4rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px rgba(13, 110, 253, 0.08);
+        }
+
+        /* Accuracy Circle Animation */
+        .circular-progress {
+            position: relative;
+            height: 140px;
+            width: 140px;
+            border-radius: 50%;
+
+            background: conic-gradient(
+                {% if accuracy >= 80 %}
+                #198754 
+                {% elif accuracy >= 60 %}
+                #ffc107 
+                {% else %}
+                #dc3545 
+                {% endif %}
+                {{ accuracy * 3.6 }}deg,
+                #edf2f7 0deg
+            );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        animation: fadeIn 1s ease-out;
+        }
+
+        .circular-progress::before {
+            content: "";
+            position: absolute;
+            height: 110px;
+            width: 110px;
+            border-radius: 50%;
+            background-color: #fff;
+        }
+
+        .progress-value {
+            position: relative;
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 0.5rem 1.25rem;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .med-row {
+            padding: 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.2s;
+        }
+
+        .med-row:last-child {
+            border-bottom: none;
+        }
+
+        .med-row:hover {
+            background: #f8fafc;
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, rgba(13, 110, 253, 0.05) 0%, rgba(0, 210, 255, 0.05) 100%);
+            border: 1px solid rgba(13, 110, 253, 0.1);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .med-row:nth-child(5n+1) { border-left: 5px solid #3b82f6; background-color: #f0f7ff; }
+        .med-row:nth-child(5n+2) { border-left: 5px solid #10b981; background-color: #f0fdf4; }
+        .med-row:nth-child(5n+3) { border-left: 5px solid #f59e0b; background-color: #fffbeb; }
+        .med-row:nth-child(5n+4) { border-left: 5px solid #ef4444; background-color: #fef2f2; }
+        .med-row:nth-child(5n+5) { border-left: 5px solid #8b5cf6; background-color: #f5f3ff; }
+
+        pre.raw-text-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #334155;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-bottom: 2.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+            display: block;
+        }
+
+        .heading-clinical { color: #1e3a8a; font-weight: 700; }
+        .heading-raw { color: #334155; font-weight: 700; }
+        
+        .med-insight-label {
+            font-weight: 700;
+            color: #475569;
+            min-width: 90px;
+            display: inline-block;
+        }
+        .med-insight-value {
+            color: #64748b;
+        }
+        .form-badge {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 0.5rem;
+            background-color: #e2e8f0;
+            color: #475569;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 0.5rem;
+        }
+
+        .btn-blue {
+            background-color: #2563eb !important;
+            color: white !important;
+            border: none !important;
+        }
+        .btn-green {
+            background-color: #16a34a !important;
+            color: white !important;
+            border: none !important;
+        }
+
+        .btn-premium {
+            padding: 1rem 2.5rem;
+            border-radius: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+        }
+
+        .btn-premium:hover {
+            transform: translateY(-5px) scale(1.03);
+            opacity: 0.95;
+        }
+
+        #btn-set-reminder:hover {
+            box-shadow: 0 15px 30px rgba(139, 92, 246, 0.4) !important;
+            color: white !important;
+        }
+
+        a[href="/diet"].btn-premium:hover {
+            box-shadow: 0 15px 30px rgba(32, 201, 151, 0.4) !important;
+            color: white !important;
+        }
+
+        .btn-upload {
+            background: var(--primary-gradient);
+            color: #fff;
+            box-shadow: 0 10px 20px rgba(13, 110, 253, 0.2);
+        }
+
+        .btn-upload:hover {
+            box-shadow: 0 15px 30px rgba(13, 110, 253, 0.4) !important;
+            color: #fff !important;
+        }
+
+        a[href="/"].btn-light:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+            color: var(--text-dark) !important;
+            background-color: #f8fafc !important;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .status-pill {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .medi {
+            color: #00bfff;
+            /* sky blue */
+            font-weight: bold;
+        }
+
+        .guide {
+            color: #000000;
+            /* black */
+            font-weight: bold;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-right: 10px;
+        }
+
+        @media print {
+
+            .premium-nav,
+            .btn,
+            .glass-card {
+                display: none;
+            }
+
+            .print-area {
+                display: block !important;
+            }
+        }
+
+        /* Toast Container */
+        .toast-container-custom {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1055;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+            /* Let clicks pass through empty space */
+        }
+
+        /* Toast Card */
+        .toast-custom {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #20c997;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: 250px;
+            pointer-events: auto;
+
+            /* Animation initial state */
+            opacity: 0;
+            transform: translateX(100%);
+            animation: slideInRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        .toast-custom.fade-out {
+            animation: fadeOutRight 0.5s forwards;
+        }
+
+        @keyframes slideInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeOutRight {
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+        .toast-icon {
+            font-size: 1.5rem;
+            color: #ffc107;
+        }
+
+        .toast-body {
+            flex-grow: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            margin-bottom: 2px;
+            color: #1e293b;
+            font-size: 1rem;
+        }
+
+        .toast-msg {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 576px) {
+            .toast-container-custom {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+            }
+
+            .toast-custom {
+                width: calc(100% - 20px);
+                min-width: unset;
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="premium-nav sticky-top">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center fw-bold text-primary fs-3" href="/">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Medi Guide Logo" class="logo">
+                <span class="medi">MEDI</span>&nbsp;<span class="guide">GUIDE</span>
+            </a>
+            <div class="d-none d-md-block">
+                <span class="text-muted small fw-medium"><i class="fas fa-shield-halved me-2"></i>HIPAA Compliant AI
+                    Analysis</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dynamic Toast Container inside body -->
+    <div class="toast-container-custom" id="toastContainer"></div>
+
+    <div class="dashboard-wrapper">
+        <!-- AI Intelligence Header -->
+        <div class="row align-items-center mb-5 animate__animated animate__fadeInDown">
+            <div class="col-lg-7">
+                <h1 class="display-5 fw-bold mb-3">{{ labels.diagnostic_title }}</h1>
+                <p class="text-muted fs-5">{{ labels.diagnostic_sub }}</p>
+            </div>
+            <div class="col-lg-5 text-center mt-4 mt-lg-0">
+                <div class="glass-card p-4 d-inline-block">
+                    <div class="circular-progress">
+                        <span class="progress-value">{{ accuracy }}%</span>
+                    </div>
+                    <p class="mt-3 mb-0 fw-bold text-muted small">{{ labels.conf_score_label }}</p>
+                </div>
+            </div>
+        </div>
+
+        {% if accuracy == 0 %}
+            <div class="glass-card mb-5 animate__animated animate__shakeX" style="border-left: 6px solid #dc3545;">
+                <div class="p-4 d-flex align-items-center">
+                    <div class="icon-box bg-danger bg-opacity-10 text-danger p-3 rounded-4 me-4">
+                        <i class="fas fa-ban fa-2x"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-1">{{ labels.invalid_image }}</h5>
+                        <p class="mb-0 text-muted">{{ labels.invalid_image_sub }}</p>
+                    </div>
+                </div>
+            </div>
+        {% elif accuracy < 60 %}
+            <div class="glass-card mb-5 animate__animated animate__shakeX" style="border-left: 6px solid #dc3545;">
+                <div class="p-4 d-flex align-items-center">
+                    <div class="icon-box bg-danger bg-opacity-10 text-danger p-3 rounded-4 me-4">
+                        <i class="fas fa-triangle-exclamation fa-2x"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-1">{{ labels.low_acc_title }}</h5>
+                        <p class="mb-0 text-muted">{{ labels.low_acc_sub }}</p>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="glass-card mb-5 animate__animated animate__fadeInUp" style="border-left: 6px solid #198754;">
+                <div class="p-4 d-flex align-items-center">
+                    <div class="icon-box bg-success bg-opacity-10 text-success p-3 rounded-4 me-4">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-1">{{ labels.valid_detected }}</h5>
+                        <p class="mb-0 text-muted">{{ labels.valid_detected_sub }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- SECTION 1: Prescription (Raw Text)         -->
+            <!-- ═══════════════════════════════════════════ -->
+            {% if raw_text %}
+            <div class="glass-card mb-5 animate__animated animate__fadeInUp">
+                <div class="p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fas fa-file-lines me-2 text-primary"></i>{{ labels.raw_text_title }}
+                        </h5>
+                        <button class="btn btn-sm btn-outline-secondary rounded-pill" type="button" data-bs-toggle="collapse" data-bs-target="#rawTextCollapse">
+                            <i class="fas fa-eye me-1"></i> {{ labels.toggle }}
+                        </button>
+                    </div>
+                    <div class="collapse show" id="rawTextCollapse">
+                        <pre class="bg-light rounded-3 p-3 small text-muted" style="white-space: pre-wrap; word-break: break-word; max-height: 300px; overflow-y: auto;">{{ raw_text }}</pre>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- SECTION 2: Extracted Medicines              -->
+            <!-- ═══════════════════════════════════════════ -->
+            <div class="glass-card mb-5 animate__animated animate__fadeInUp">
+                <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-pills me-2 text-primary"></i>{{ labels.extracted_medicines }}
+                    </h5>
+                    <span class="status-pill bg-success bg-opacity-10 text-success">{{ medicines|length }} {{ labels.found }}</span>
+                </div>
+                <div class="med-list">
+                    {% for med in medicines %}
+                    <div class="med-row">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5 class="fw-bold mb-2">
+                                    <span style="color: #2563eb;">{{ med.display_name or med.name }}</span>
+                                    <span class="text-muted fw-normal"> – {{ med.dosage or labels.as_prescribed }}</span>
+                                    {% if med.form %}<span class="form-badge">{{ med.form }}</span>{% endif %}
+                                </h5>
+                                <div class="med-insights ps-3 border-start small">
+                                    <div class="mb-1">
+                                        <span class="med-insight-label">{{ labels.use_label }}:</span>
+                                        <span class="med-insight-value">{{ med.use or labels.as_prescribed }}</span>
+                                    </div>
+                                    <div class="mb-1">
+                                        <span class="med-insight-label">{{ labels.diet_label }}:</span>
+                                        <span class="med-insight-value">{{ med.diet or labels.as_prescribed }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="med-insight-label">{{ labels.suggestion_label }}:</span>
+                                        <span class="med-insight-value">{{ med.suggestions or labels.follow_doctor }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-light text-muted rounded-pill px-3 py-2">ID: #MG-{{ loop.index }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- SECTION 3: Medication Scheduling            -->
+            <!-- ═══════════════════════════════════════════ -->
+            <div class="glass-card mb-5 animate__animated animate__fadeInUp">
+                <div class="p-4 border-bottom">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-clock me-2 text-primary"></i>{{ labels.medication_scheduling }}
+                    </h5>
+                </div>
+                <div class="p-4">
+                    <div class="table-responsive">
+                        <table class="table table-borderless align-middle mb-0">
+                            <thead>
+                                <tr class="text-muted small text-uppercase" style="letter-spacing: 0.05em;">
+                                    <th style="width: 35%;">{{ labels.medicine }}</th>
+                                    <th class="text-center"><i class="fas fa-sun text-warning me-1"></i> {{ labels.morning }}</th>
+                                    <th class="text-center"><i class="fas fa-cloud-sun text-info me-1"></i> {{ labels.afternoon }}</th>
+                                    <th class="text-center"><i class="fas fa-moon text-dark me-1"></i> {{ labels.night }}</th>
+                                    <th class="text-center">{{ labels.instructions }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for med in medicines %}
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td>
+                                        <span class="fw-bold" style="color: #2563eb;">{{ med.display_name or med.name }}</span>
+                                        <br><small class="text-muted">{{ med.dosage or labels.as_prescribed }}</small>
+                                    </td>
+                                    {% if 'Morning' in med.schedule %}
+                                        {% set parts = med.schedule.split('|') %}
+                                        {% set morning_val = parts[0].split(':')[-1].strip().split(' ')[0] if parts|length > 0 else '–' %}
+                                        {% set afternoon_val = parts[1].split(':')[-1].strip().split(' ')[0] if parts|length > 1 else '–' %}
+                                        {% set night_val = parts[2].split(':')[-1].strip().split(' ')[0] if parts|length > 2 else '–' %}
+                                        <td class="text-center">
+                                            {% if morning_val == '1' %}
+                                                <span class="badge rounded-pill bg-success bg-opacity-10 text-success px-3 py-2"><i class="fas fa-check me-1"></i>✓</span>
+                                            {% else %}
+                                                <span class="badge rounded-pill bg-light text-muted px-3 py-2">—</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center">
+                                            {% if afternoon_val == '1' %}
+                                                <span class="badge rounded-pill bg-success bg-opacity-10 text-success px-3 py-2"><i class="fas fa-check me-1"></i>✓</span>
+                                            {% else %}
+                                                <span class="badge rounded-pill bg-light text-muted px-3 py-2">—</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center">
+                                            {% if night_val == '1' %}
+                                                <span class="badge rounded-pill bg-success bg-opacity-10 text-success px-3 py-2"><i class="fas fa-check me-1"></i>✓</span>
+                                            {% else %}
+                                                <span class="badge rounded-pill bg-light text-muted px-3 py-2">—</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center">
+                                            {% if '(After Food)' in med.schedule %}
+                                                <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning px-3 py-2"><i class="fas fa-utensils me-1"></i>{{ labels.after_food }}</span>
+                                            {% elif '(Before Food)' in med.schedule %}
+                                                <span class="badge rounded-pill bg-info bg-opacity-10 text-info px-3 py-2"><i class="fas fa-utensils me-1"></i>{{ labels.before_food }}</span>
+                                            {% elif '(At Night)' in med.schedule %}
+                                                <span class="badge rounded-pill bg-dark bg-opacity-10 text-dark px-3 py-2"><i class="fas fa-moon me-1"></i>{{ labels.at_night }}</span>
+                                            {% else %}
+                                                <span class="text-muted small">—</span>
+                                            {% endif %}
+                                        </td>
+                                    {% else %}
+                                        <td colspan="4" class="text-center">
+                                            <span class="text-muted fst-italic"><i class="fas fa-stethoscope me-1"></i>{{ labels.follow_doctor }}</span>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+        {% endif %}
+
+        <!-- Navigation Section -->
+        <div class="text-center mt-5 pt-4 animate__animated animate__fadeIn">
+            <div class="d-flex flex-wrap justify-content-center gap-4">
+                <a href="/upload_page" class="btn btn-premium btn-blue shadow-lg">
+                    <i class="fas fa-redo me-2"></i>{{ labels.scan_new }}
+                </a>
+                <a href="/diet" class="btn btn-premium btn-green shadow-lg">
+                    <i class="fas fa-apple-whole me-2"></i>{{ labels.view_diet }}
+                </a>
+                <a href="/pharmacy" class="btn btn-premium shadow-lg" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: white;">
+                    <i class="fas fa-cart-shopping me-2"></i>{{ labels.buy_medicines }}
+                </a>
+                <a href="/" class="btn btn-premium shadow-sm border bg-white text-muted">
+                    <i class="fas fa-arrow-left me-2"></i>{{ labels.return_home }}
+                </a>
+            </div>
+            <p class="mt-4 text-muted small"><i class="fas fa-shield-check me-2"></i>{{ labels.encryption }}</p>
+        </div>
+    </div>
+
+    <footer class="py-5 border-top bg-white mt-5">
+        <div class="container text-center">
+            <p class="text-muted small mb-0">&copy; 2026 Medi Guide Diagnostic AI. For informational purposes only.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

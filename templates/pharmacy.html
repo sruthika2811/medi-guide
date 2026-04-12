@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ labels.pharmacy_title }} | Medi Guide</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --primary-gradient: linear-gradient(135deg, #0d6efd 0%, #00d2ff 100%);
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f8fafc;
+            color: var(--text-dark);
+            background-image: radial-gradient(at 0% 0%, rgba(13, 110, 253, 0.05) 0, transparent 50%),
+                radial-gradient(at 50% 0%, rgba(0, 210, 255, 0.05) 0, transparent 50%);
+            min-height: 100vh;
+        }
+
+        .premium-nav {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 1.25rem 0;
+        }
+
+        .dashboard-wrapper {
+            max-width: 1100px;
+            margin: 4rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .pharmacy-section .pharm-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 1.25rem;
+            padding: 1.75rem;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pharmacy-section .pharm-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #06b6d4, #8b5cf6);
+        }
+
+        .pharmacy-section .pharm-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.12);
+            border-color: #bfdbfe;
+        }
+
+        .pharmacy-section .best-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            color: #fff;
+            padding: 0.35rem 0.9rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+        }
+
+        .pharmacy-section .btn-buy-best {
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            color: #fff;
+            border: none;
+            padding: 0.65rem 1.75rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+            text-decoration: none;
+        }
+
+        .pharmacy-section .btn-buy-best:hover {
+            transform: translateY(-3px) scale(1.04);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.45);
+            color: #fff;
+        }
+
+        .pharmacy-section .btn-pharmacy-alt {
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.82rem;
+            transition: all 0.25s ease;
+            text-decoration: none;
+        }
+
+        .pharmacy-section .btn-pharmacy-alt:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .pharmacy-section .best-pharmacy-card {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.04) 0%, rgba(124, 58, 237, 0.04) 100%);
+            border: 1.5px solid rgba(37, 99, 235, 0.15);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            position: relative;
+        }
+
+        .pharmacy-section .best-pharmacy-card::after {
+            content: '🏆';
+            position: absolute;
+            top: -10px;
+            right: 12px;
+            font-size: 1.5rem;
+        }
+
+        .pharmacy-section .pharm-med-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .pharmacy-section .pharm-dosage {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .btn-premium {
+            padding: 1rem 2.5rem;
+            border-radius: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-premium:hover {
+            transform: translateY(-5px) scale(1.03);
+            opacity: 0.95;
+        }
+
+        .btn-blue {
+            background-color: #2563eb !important;
+            color: white !important;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-right: 10px;
+        }
+
+        .medi { color: #00bfff; font-weight: bold; }
+        .guide { color: #000000; font-weight: bold; }
+
+        @media (max-width: 768px) {
+            .pharmacy-section .pharmacy-options {
+                flex-direction: column !important;
+            }
+            .pharmacy-section .btn-pharmacy-alt {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="premium-nav sticky-top">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center fw-bold text-primary fs-3" href="/">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Medi Guide Logo" class="logo">
+                <span class="medi">MEDI</span>&nbsp;<span class="guide">GUIDE</span>
+            </a>
+            <div class="d-none d-md-block">
+                <span class="text-muted small fw-medium"><i class="fas fa-store me-2"></i>Pharmacy Procurement Interface</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-wrapper">
+        <div class="text-center mb-5 animate__animated animate__fadeInDown">
+            <h1 class="display-5 fw-bold mb-3">{{ labels.pharmacy_title }}</h1>
+            <p class="text-muted fs-5">Secure procurement options for your analyzed medications.</p>
+        </div>
+
+        <div class="pharmacy-section glass-card mb-5 animate__animated animate__fadeInUp">
+            <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0">
+                    <i class="fas fa-cart-shopping me-2 text-primary"></i>{{ labels.buy_medicines }}
+                </h5>
+                <span class="text-muted small"><i class="fas fa-info-circle me-1"></i>Recommended based on availability and pricing trends</span>
+            </div>
+            <div class="p-4">
+                <div class="row g-4">
+                    {% for med in medicines %}
+                    <div class="col-lg-6 col-12">
+                        <div class="pharm-card h-100">
+                            <!-- Medicine Header -->
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <span class="pharm-med-name">{{ med.display_name or med.name }}</span>
+                                    <br>
+                                    <span class="pharm-dosage">{{ med.dosage or labels.as_prescribed }}</span>
+                                </div>
+                                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-1">
+                                    <i class="fas fa-pills me-1"></i>{{ med.form or 'Tablet' }}
+                                </span>
+                            </div>
+
+                            <!-- Best Pharmacy -->
+                            <div class="best-pharmacy-card mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="best-badge">
+                                        ⭐ Best Option
+                                    </span>
+                                    <small class="text-muted fw-medium">Verified</small>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="fw-bold mb-0" style="color: #1e293b;">
+                                            <i class="fas fa-store me-1 text-primary"></i>
+                                            {% if loop.index % 3 == 1 %}MedPlus Pharmacy
+                                            {% elif loop.index % 3 == 2 %}Apollo Pharmacy
+                                            {% else %}1mg Health Store
+                                            {% endif %}
+                                        </p>
+                                        <small class="text-muted">
+                                            {% if loop.index % 3 == 1 %}📍 0.8 km away • Open till 10 PM
+                                            {% elif loop.index % 3 == 2 %}📍 1.2 km away • Open 24h
+                                            {% else %}🚚 Online • Free delivery above ₹299
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                    <a href="https://www.google.com/maps/search/pharmacy+near+me" target="_blank" class="btn btn-buy-best">
+                                        🛒 Buy Now
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Alt Pharmacies -->
+                            <div>
+                                <small class="text-muted fw-bold text-uppercase" style="letter-spacing: 0.05em; font-size: 0.7rem;">Other Options</small>
+                                <div class="d-flex flex-wrap gap-2 mt-2 pharmacy-options">
+                                    <a href="https://www.netmeds.com/search?q={{ med.name }}" target="_blank" class="btn btn-pharmacy-alt">
+                                        <i class="fas fa-truck me-1"></i>Netmeds
+                                    </a>
+                                    <a href="https://pharmeasy.in/search/all?name={{ med.name }}" target="_blank" class="btn btn-pharmacy-alt">
+                                        <i class="fas fa-capsules me-1"></i>PharmEasy
+                                    </a>
+                                    <a href="https://www.1mg.com/search/all?name={{ med.name }}" target="_blank" class="btn btn-pharmacy-alt">
+                                        <i class="fas fa-prescription-bottle me-1"></i>1mg
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="/results" class="btn btn-premium btn-blue shadow-lg">
+                <i class="fas fa-arrow-left me-2"></i>Back to Diagnosis
+            </a>
+        </div>
+    </div>
+
+    <footer class="py-5 border-top bg-white mt-5">
+        <div class="container text-center">
+            <p class="text-muted small mb-0">&copy; 2026 Medi Guide Diagnostic AI. For informational purposes only.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

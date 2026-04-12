@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet Recommendations | Medi Guide</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <style>
+        /* Shared variables */
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --primary-gradient: linear-gradient(135deg, #0d6efd 0%, #00d2ff 100%);
+            --warning-gradient: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%);
+            --success-gradient: linear-gradient(135deg, #198754 0%, #20c997 100%);
+            --danger-gradient: linear-gradient(135deg, #dc3545 0%, #ff4b5c 100%);
+            --text-dark: #1e293b;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f8fafc;
+            color: var(--text-dark);
+            background-image: radial-gradient(at 0% 0%, rgba(13, 110, 253, 0.05) 0, transparent 50%), 
+                              radial-gradient(at 50% 0%, rgba(0, 210, 255, 0.05) 0, transparent 50%);
+            min-height: 100vh;
+        }
+
+        .premium-nav {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 1.25rem 0;
+        }
+
+        .dashboard-wrapper {
+            max-width: 1100px;
+            margin: 4rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.03);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(13, 110, 253, 0.08);
+        }
+
+        .diet-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+        
+        .icon-gradient-primary { background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .icon-gradient-warning { background: var(--warning-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .icon-gradient-danger { background: var(--danger-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .icon-gradient-success { background: var(--success-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 1.5rem;
+            border-left: 3px solid #0d6efd;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -0.45rem;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+        }
+
+        .btn-premium {
+            padding: 1rem 2.5rem;
+            border-radius: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            border: none;
+        }
+        
+        .btn-outline-hover:hover {
+            background: var(--primary-gradient);
+            color: white !important;
+            border-color: transparent;
+        }
+
+        /* Adjustments for logo */
+        .logo { width: 50px; height: 50px; object-fit: contain; margin-right: 10px; }
+        .medi { color: #00bfff; font-weight: bold; }
+        .guide { color: #000000; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <nav class="premium-nav sticky-top">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center fw-bold text-primary fs-3" href="/">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Medi Guide Logo" class="logo">
+                <span class="medi">MEDI</span>&nbsp;<span class="guide">GUIDE</span>
+            </a>
+            <div class="d-none d-md-block">
+                <a href="/results" class="btn btn-outline-primary rounded-pill px-4 fw-bold btn-outline-hover">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Results
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-wrapper">
+        <div class="text-center mb-5 animate__animated animate__fadeInDown">
+            <h1 class="display-5 fw-bold mb-3">Diet Recommendations Based on Your Prescription</h1>
+            <p class="text-muted fs-5">Personalized nutritional advice to maximize the efficacy of your medications.</p>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <!-- General Tips -->
+            <div class="col-lg-6 animate__animated animate__fadeInLeft">
+                <div class="glass-card p-4 h-100">
+                    <i class="fas fa-apple-whole diet-icon icon-gradient-success"></i>
+                    <h4 class="fw-bold mb-3">General Diet Tips</h4>
+                    <ul class="list-unstyled text-muted">
+                        {% for tip in general_tips %}
+                        <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>{{ tip }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Foods to Avoid -->
+            <div class="col-lg-6 animate__animated animate__fadeInRight">
+                <div class="glass-card p-4 h-100">
+                    <i class="fas fa-ban diet-icon icon-gradient-danger"></i>
+                    <h4 class="fw-bold mb-3">Foods to Avoid</h4>
+                    <ul class="list-unstyled text-muted">
+                        {% if foods_to_avoid %}
+                            {% for avoid in foods_to_avoid %}
+                            <li class="mb-3"><i class="fas fa-times-circle text-danger me-2"></i>{{ avoid }}</li>
+                            {% endfor %}
+                        {% else %}
+                            <li><i class="fas fa-check-circle text-success me-2"></i>No specific dietary restrictions found for these medications.</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <!-- Medicine Based -->
+            <div class="col-lg-7 animate__animated animate__fadeInUp">
+                <div class="glass-card p-4 h-100">
+                    <i class="fas fa-pills diet-icon icon-gradient-primary"></i>
+                    <h4 class="fw-bold mb-4">Medicine-based Recommendations</h4>
+                    
+                    {% if med_recs %}
+                        {% for tip in med_recs %}
+                        <div class="p-3 mb-3 bg-light rounded-3 border">
+                            <h6 class="fw-bold text-{{ tip.color }} mb-1"><i class="fas {{ tip.icon }} me-2"></i>{{ tip.trigger }}</h6>
+                            <p class="mb-0 text-muted small"><strong>Action:</strong> {{ tip.action }}</p>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="p-4 bg-light rounded-3 border text-center">
+                            <i class="fas fa-leaf fa-2x text-success mb-3 opacity-50"></i>
+                            <h6 class="fw-bold text-muted mb-1">No specific medication triggers found</h6>
+                            <p class="mb-0 text-muted small">Follow the general diet tips and simple daily plan for a balanced routine.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Daily Plan -->
+            <div class="col-lg-5 animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+                <div class="glass-card p-4 h-100">
+                    <i class="fas fa-calendar-day diet-icon icon-gradient-warning"></i>
+                    <h4 class="fw-bold mb-4">Simple Daily Plan</h4>
+                    
+                    {% for phase in daily_plan %}
+                        <div class="timeline-item {% if loop.last %}border-0 mb-0 pb-0{% endif %}">
+                            <h6 class="fw-bold mb-1 text-{{ phase.color }}"><i class="fas {{ phase.icon }} me-2"></i>{{ phase.label }}</h6>
+                            {% if phase.meds %}
+                                {% for item in phase.meds %}
+                                <p class="small text-muted mb-1">• {{ item }}</p>
+                                {% endfor %}
+                            {% else %}
+                                <p class="small text-muted mb-0">No specific medication for {{ phase.label.lower() }}. Maintain a healthy routine.</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center pb-5 d-md-none animate__animated animate__fadeIn">
+             <a href="/results" class="btn btn-primary btn-premium shadow-lg w-100" style="background: var(--primary-gradient);">
+                <i class="fas fa-arrow-left me-2"></i>Back to Results
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
